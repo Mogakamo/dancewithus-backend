@@ -114,6 +114,14 @@ def follow():
   else:
     return "Method Forbidden!"
   
+@app.route('/fetchposts', methods=["GET", "POST"])
+@cross_origin()
+def fetchPosts():
+    if request.method == "GET":
+        userEmail = request.json["userEmail"]
+        res = firebaseDatabase.fetchPosts(userEmail)
+        return jsonify(res)
+
 if __name__ == "__main__":
     app.run(
         host = "localhost",

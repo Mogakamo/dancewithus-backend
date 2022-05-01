@@ -1,3 +1,5 @@
+import string
+from turtle import reset
 import pyrebase
 import pickle as pkl
 
@@ -62,7 +64,7 @@ def fetchFollowers(userEmail):
   return dict(db.child('users').child(userEmail.split('@')[0]).child("followers").get().val())
 
 def fetchFollowing(userEmail):
-  return dict(db.child('users').child(userEmail.split('@')[0]).child("following").get().val())
+  return db.child('users').child(userEmail.split('@')[0]).child("following").get().val()
 
 def follow(userEmail, followEmail):
   userData = dict(db.child('users').child(userEmail.split('@')[0]).get().val())
@@ -72,3 +74,14 @@ def follow(userEmail, followEmail):
   followData["followers"].append(userEmail.split('@')[0])
   db.child('users').child(followEmail.split('@')[0]).set(followData)
   return True
+
+def fetchPosts(userEmail):
+  following = tuple(fetchFollowing(userEmail))
+  res = []
+  for i in following:
+    if i != "0":
+      res.append(i)
+  posts = []
+  for i in res:
+    posts.append(db.child('users').child(i).child('videos').get().val())
+  return posts
